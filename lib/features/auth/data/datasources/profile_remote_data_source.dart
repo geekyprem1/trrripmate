@@ -23,4 +23,16 @@ class ProfileRemoteDataSource {
         await _client.from(_table).upsert(dto.toJson()).select().single();
     return ProfileDto.fromJson(row);
   }
+
+  /// Looks up a profile by username (case-insensitive). Returns `null` when not
+  /// found so callers can surface a "user not found" failure cleanly.
+  Future<ProfileDto?> findProfileByUsername(String username) async {
+    final row = await _client
+        .from(_table)
+        .select()
+        .ilike('username', username)
+        .maybeSingle();
+    if (row == null) return null;
+    return ProfileDto.fromJson(row);
+  }
 }

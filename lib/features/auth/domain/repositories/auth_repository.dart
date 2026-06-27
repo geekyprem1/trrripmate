@@ -51,6 +51,11 @@ abstract interface class AuthRepository {
   /// API §2.2).
   Future<Result<UserProfile>> upsertProfile({
     required String displayName,
+    required String username,
     String? avatarUrl,
   });
+
+  /// Finds a user profile by their unique [username] (case-insensitive).
+  /// Returns `null` wrapped in success when no user matches.
+  Future<Result<UserProfile?>> findUserByUsername(String username);
 }

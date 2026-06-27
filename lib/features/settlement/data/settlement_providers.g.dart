@@ -82,7 +82,7 @@ final settlementRepositoryProvider = Provider<SettlementRepository>.internal(
 // ignore: unused_element
 typedef SettlementRepositoryRef = ProviderRef<SettlementRepository>;
 String _$completedSettlementsHash() =>
-    r'29fdce5d4142c0a52d1c7297c850754d042232dc';
+    r'61da66c76e76daf4a998ba0c157f75c96804bb57';
 
 /// Copied from Dart SDK
 class _SystemHash {

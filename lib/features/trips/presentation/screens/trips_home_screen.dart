@@ -6,6 +6,7 @@ import 'package:tripmate/app/theme/app_spacing.dart';
 import 'package:tripmate/core/error/failure.dart';
 import 'package:tripmate/core/widgets/app_state_views.dart';
 import 'package:tripmate/features/auth/data/auth_providers.dart';
+import 'package:tripmate/features/members/data/member_providers.dart';
 import 'package:tripmate/features/trips/data/trip_providers.dart';
 import 'package:tripmate/features/trips/domain/entities/trip.dart';
 import 'package:tripmate/features/trips/presentation/controllers/trip_actions_controller.dart';
@@ -80,6 +81,7 @@ class _TripsHomeScreenState extends ConsumerState<TripsHomeScreen> {
       appBar: AppBar(
         title: const Text('Trips'),
         actions: [
+          const _NotificationBell(),
           IconButton(
             icon: const Icon(Icons.archive_outlined),
             tooltip: 'Archived trips',
@@ -153,6 +155,30 @@ class _TripsHomeScreenState extends ConsumerState<TripsHomeScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Notification bell with unread badge
+// ---------------------------------------------------------------------------
+
+class _NotificationBell extends ConsumerWidget {
+  const _NotificationBell();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notificationsAsync = ref.watch(unreadNotificationsProvider);
+    final count = notificationsAsync.valueOrNull?.length ?? 0;
+
+    return IconButton(
+      tooltip: 'Notifications',
+      onPressed: () => context.pushNamed(AppRoutes.notificationsName),
+      icon: Badge(
+        isLabelVisible: count > 0,
+        label: Text(count > 9 ? '9+' : '$count'),
+        child: const Icon(Icons.notifications_outlined),
       ),
     );
   }

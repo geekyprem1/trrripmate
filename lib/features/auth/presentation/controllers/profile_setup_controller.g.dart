@@ -7,7 +7,7 @@ part of 'profile_setup_controller.dart';
 // **************************************************************************
 
 String _$profileSetupControllerHash() =>
-    r'4b9685e2d7d5d9428c1c8380ef603aeb2ff94327';
+    r'56ef7140f4d22de3017166819d276db01384d59f';
 
 /// Drives the Profile Setup / onboarding screen (UI/UX §3.4). On success it
 /// invalidates [profileStatusProvider] so the router advances to Home.

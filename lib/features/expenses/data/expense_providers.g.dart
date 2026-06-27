@@ -116,7 +116,7 @@ final expenseRepositoryProvider = Provider<ExpenseRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ExpenseRepositoryRef = ProviderRef<ExpenseRepository>;
-String _$tripExpensesHash() => r'9f40685833c2ca9b4d39192b00aac9f925a05f45';
+String _$tripExpensesHash() => r'ef66a58d0aa653f7cfcbfe89f2cd0e9f49f09630';
 
 /// Copied from Dart SDK
 class _SystemHash {

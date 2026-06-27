@@ -4,6 +4,7 @@ import 'package:tripmate/core/providers/core_providers.dart';
 import 'package:tripmate/features/members/data/datasources/invite_remote_data_source.dart';
 import 'package:tripmate/features/members/data/datasources/member_dao.dart';
 import 'package:tripmate/features/members/data/datasources/member_remote_data_source.dart';
+import 'package:tripmate/features/members/data/datasources/notifications_remote_data_source.dart';
 import 'package:tripmate/features/members/data/repositories/member_repository_impl.dart';
 import 'package:tripmate/features/members/domain/entities/member.dart';
 import 'package:tripmate/features/members/domain/repositories/member_repository.dart';
@@ -42,4 +43,15 @@ Stream<List<Member>> tripMembers(Ref ref, String tripId) {
   // Start roster ingest for this trip upon observation (Architecture §9).
   Future.microtask(() => repo.refreshMembers(tripId));
   return repo.watchMembers(tripId);
+}
+
+@Riverpod(keepAlive: true)
+NotificationsRemoteDataSource notificationsRemoteDataSource(Ref ref) {
+  return NotificationsRemoteDataSource(ref.watch(supabaseClientProvider));
+}
+
+/// Unread notifications for the current user. Invalidate to refresh.
+@riverpod
+Future<List<NotificationRow>> unreadNotifications(Ref ref) {
+  return ref.watch(notificationsRemoteDataSourceProvider).fetchUnread();
 }

@@ -38,14 +38,25 @@ AuthRepository authRepository(Ref ref) {
 /// Reactive auth state for the router and UI (Architecture §8).
 @Riverpod(keepAlive: true)
 Stream<AuthUser?> authState(Ref ref) {
-  // DEV BYPASS: Offline testing mock
-  return Stream.value(const AuthUser(id: 'offline-user-1', email: 'test@tripmate.offline'));
+  return ref.watch(authRepositoryProvider).authStateChanges();
 }
 
 /// Whether the signed-in user already has a profile. Drives onboarding routing
 /// (PRD §3.4 / UI/UX §3.4). Recomputes whenever auth state changes.
 @Riverpod(keepAlive: true)
 Future<bool> profileStatus(Ref ref) async {
-  // DEV BYPASS: Offline testing mock
-  return true;
+  final user = await ref.watch(authStateProvider.future);
+  if (user == null) return false;
+  final result = await ref.read(authRepositoryProvider).fetchMyProfile();
+  return result.fold(onSuccess: (p) => p != null, onFailure: (_) => false);
+}
+
+/// Current user's full profile — used in Settings for QR display and
+/// anywhere the display name or username is needed.
+@Riverpod(keepAlive: true)
+Future<UserProfile?> myProfile(Ref ref) async {
+  // Re-fetch when auth state changes.
+  await ref.watch(authStateProvider.future);
+  final result = await ref.read(authRepositoryProvider).fetchMyProfile();
+  return result.fold(onSuccess: (p) => p, onFailure: (_) => null);
 }

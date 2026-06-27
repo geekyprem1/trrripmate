@@ -52,4 +52,16 @@ abstract final class Validators {
     if (input.length > 60) return 'Name must be 60 characters or fewer.';
     return null;
   }
+
+  static final _usernameRegex = RegExp(r'^[a-zA-Z0-9_]{3,20}$');
+
+  /// Username: 3–20 chars, letters/numbers/underscores only.
+  static String? username(String? value) {
+    final input = value?.trim() ?? '';
+    if (input.isEmpty) return 'Username is required.';
+    if (!_usernameRegex.hasMatch(input)) {
+      return '3–20 characters: letters, numbers, underscores only.';
+    }
+    return null;
+  }
 }

@@ -12,6 +12,7 @@ class UserProfile with _$UserProfile {
     required String id,
     required String displayName,
     @Default(UserTier.free) UserTier tier,
+    String? username,
     String? avatarUrl,
     String? email,
     String? phone,

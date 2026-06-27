@@ -16,20 +16,21 @@ class ProfileSetupScreen extends ConsumerStatefulWidget {
 class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _usernameController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    // On success the controller invalidates profileStatus; the router redirect
-    // advances to Home automatically.
-    await ref
-        .read(profileSetupControllerProvider.notifier)
-        .submit(displayName: _nameController.text);
+    await ref.read(profileSetupControllerProvider.notifier).submit(
+          displayName: _nameController.text,
+          username: _usernameController.text,
+        );
   }
 
   @override
@@ -73,15 +74,23 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     ),
                     const SizedBox(height: AppSpacing.xl),
                     Text(
-                      'What should we call you?',
+                      'Set up your profile',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      'Your username is unique — friends use it to find you.',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     TextFormField(
                       controller: _nameController,
                       textCapitalization: TextCapitalization.words,
-                      textInputAction: TextInputAction.done,
+                      textInputAction: TextInputAction.next,
                       autofocus: true,
                       maxLength: 60,
                       decoration: const InputDecoration(
@@ -90,6 +99,19 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                         counterText: '',
                       ),
                       validator: Validators.displayName,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    TextFormField(
+                      controller: _usernameController,
+                      textInputAction: TextInputAction.done,
+                      maxLength: 20,
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
+                        prefixIcon: Icon(Icons.alternate_email),
+                        hintText: 'e.g. rahul_travels',
+                        counterText: '',
+                      ),
+                      validator: Validators.username,
                       onFieldSubmitted: (_) => _submit(),
                     ),
                     const SizedBox(height: AppSpacing.lg),

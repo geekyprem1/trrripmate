@@ -15,6 +15,7 @@ import 'package:tripmate/features/expenses/presentation/screens/expense_screen_l
 import 'package:tripmate/features/members/presentation/controllers/pending_invite.dart';
 import 'package:tripmate/features/members/presentation/screens/join_trip_screen.dart';
 import 'package:tripmate/features/members/presentation/screens/members_screen.dart';
+import 'package:tripmate/features/members/presentation/screens/notifications_screen.dart';
 import 'package:tripmate/features/premium/presentation/screens/paywall_screen.dart';
 import 'package:tripmate/features/trips/presentation/screens/archived_trips_screen.dart';
 import 'package:tripmate/features/trips/presentation/screens/create_edit_trip_screen.dart';
@@ -128,6 +129,11 @@ GoRouter goRouter(Ref ref) {
         name: AppRoutes.expenseDetailName,
         builder: (_, state) =>
             ExpenseDetailScreen(expenseId: state.pathParameters['eid']!),
+      ),
+      GoRoute(
+        path: AppRoutes.notificationsPath,
+        name: AppRoutes.notificationsName,
+        builder: (_, __) => const NotificationsScreen(),
       ),
       // Sprint 7 — Settings and Paywall.
       GoRoute(

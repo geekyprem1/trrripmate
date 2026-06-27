@@ -63,7 +63,7 @@ final authRepositoryProvider = Provider<AuthRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthRepositoryRef = ProviderRef<AuthRepository>;
-String _$authStateHash() => r'cf282c1d620018234a007326265b04a8181dff0c';
+String _$authStateHash() => r'97ca81ed728c8d7ba5b0f50eb8590093d8d3c5a9';
 
 /// Reactive auth state for the router and UI (Architecture §8).
 ///
@@ -81,7 +81,7 @@ final authStateProvider = StreamProvider<AuthUser?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthStateRef = StreamProviderRef<AuthUser?>;
-String _$profileStatusHash() => r'f0dd9d2d841a83ae402259b3ca9865f865c56524';
+String _$profileStatusHash() => r'063f17329b4cd004bf679461cb4eabac4b3b1ccc';
 
 /// Whether the signed-in user already has a profile. Drives onboarding routing
 /// (PRD §3.4 / UI/UX §3.4). Recomputes whenever auth state changes.
@@ -101,5 +101,24 @@ final profileStatusProvider = FutureProvider<bool>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ProfileStatusRef = FutureProviderRef<bool>;
+String _$myProfileHash() => r'fe5810d23eb49862ce5f451e441ab64410381e7f';
+
+/// Current user's full profile — used in Settings for QR display and
+/// anywhere the display name or username is needed.
+///
+/// Copied from [myProfile].
+@ProviderFor(myProfile)
+final myProfileProvider = FutureProvider<UserProfile?>.internal(
+  myProfile,
+  name: r'myProfileProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$myProfileHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef MyProfileRef = FutureProviderRef<UserProfile?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

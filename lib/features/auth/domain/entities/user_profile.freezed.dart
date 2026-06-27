@@ -19,6 +19,7 @@ mixin _$UserProfile {
   String get id => throw _privateConstructorUsedError;
   String get displayName => throw _privateConstructorUsedError;
   UserTier get tier => throw _privateConstructorUsedError;
+  String? get username => throw _privateConstructorUsedError;
   String? get avatarUrl => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get phone => throw _privateConstructorUsedError;
@@ -40,6 +41,7 @@ abstract class $UserProfileCopyWith<$Res> {
       {String id,
       String displayName,
       UserTier tier,
+      String? username,
       String? avatarUrl,
       String? email,
       String? phone});
@@ -63,6 +65,7 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
     Object? id = null,
     Object? displayName = null,
     Object? tier = null,
+    Object? username = freezed,
     Object? avatarUrl = freezed,
     Object? email = freezed,
     Object? phone = freezed,
@@ -80,6 +83,10 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
           ? _value.tier
           : tier // ignore: cast_nullable_to_non_nullable
               as UserTier,
+      username: freezed == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String?,
       avatarUrl: freezed == avatarUrl
           ? _value.avatarUrl
           : avatarUrl // ignore: cast_nullable_to_non_nullable
@@ -108,6 +115,7 @@ abstract class _$$UserProfileImplCopyWith<$Res>
       {String id,
       String displayName,
       UserTier tier,
+      String? username,
       String? avatarUrl,
       String? email,
       String? phone});
@@ -129,6 +137,7 @@ class __$$UserProfileImplCopyWithImpl<$Res>
     Object? id = null,
     Object? displayName = null,
     Object? tier = null,
+    Object? username = freezed,
     Object? avatarUrl = freezed,
     Object? email = freezed,
     Object? phone = freezed,
@@ -146,6 +155,10 @@ class __$$UserProfileImplCopyWithImpl<$Res>
           ? _value.tier
           : tier // ignore: cast_nullable_to_non_nullable
               as UserTier,
+      username: freezed == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String?,
       avatarUrl: freezed == avatarUrl
           ? _value.avatarUrl
           : avatarUrl // ignore: cast_nullable_to_non_nullable
@@ -169,6 +182,7 @@ class _$UserProfileImpl implements _UserProfile {
       {required this.id,
       required this.displayName,
       this.tier = UserTier.free,
+      this.username,
       this.avatarUrl,
       this.email,
       this.phone});
@@ -181,6 +195,8 @@ class _$UserProfileImpl implements _UserProfile {
   @JsonKey()
   final UserTier tier;
   @override
+  final String? username;
+  @override
   final String? avatarUrl;
   @override
   final String? email;
@@ -189,7 +205,7 @@ class _$UserProfileImpl implements _UserProfile {
 
   @override
   String toString() {
-    return 'UserProfile(id: $id, displayName: $displayName, tier: $tier, avatarUrl: $avatarUrl, email: $email, phone: $phone)';
+    return 'UserProfile(id: $id, displayName: $displayName, tier: $tier, username: $username, avatarUrl: $avatarUrl, email: $email, phone: $phone)';
   }
 
   @override
@@ -201,6 +217,8 @@ class _$UserProfileImpl implements _UserProfile {
             (identical(other.displayName, displayName) ||
                 other.displayName == displayName) &&
             (identical(other.tier, tier) || other.tier == tier) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
             (identical(other.avatarUrl, avatarUrl) ||
                 other.avatarUrl == avatarUrl) &&
             (identical(other.email, email) || other.email == email) &&
@@ -208,8 +226,8 @@ class _$UserProfileImpl implements _UserProfile {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, displayName, tier, avatarUrl, email, phone);
+  int get hashCode => Object.hash(
+      runtimeType, id, displayName, tier, username, avatarUrl, email, phone);
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.
@@ -225,6 +243,7 @@ abstract class _UserProfile implements UserProfile {
       {required final String id,
       required final String displayName,
       final UserTier tier,
+      final String? username,
       final String? avatarUrl,
       final String? email,
       final String? phone}) = _$UserProfileImpl;
@@ -235,6 +254,8 @@ abstract class _UserProfile implements UserProfile {
   String get displayName;
   @override
   UserTier get tier;
+  @override
+  String? get username;
   @override
   String? get avatarUrl;
   @override

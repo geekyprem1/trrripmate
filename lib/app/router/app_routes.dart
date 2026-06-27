@@ -47,6 +47,10 @@ abstract final class AppRoutes {
   static const invitePath = '/invite/:code';
   static const inviteName = 'invite';
 
+  // Notifications screen.
+  static const notificationsPath = '/notifications';
+  static const notificationsName = 'notifications';
+
   // Settings / Profile (UI/UX §3.18, Sprint 7).
   static const settingsPath = '/settings';
   static const settingsName = 'settings';

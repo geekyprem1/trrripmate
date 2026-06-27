@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:tripmate/app/router/app_routes.dart';
 import 'package:tripmate/app/theme/app_spacing.dart';
 import 'package:tripmate/features/auth/data/auth_providers.dart';
@@ -22,6 +24,8 @@ class SettingsScreen extends ConsumerWidget {
         // ignore: prefer_const_literals_to_create_immutables
         children: [
           const _ProfileSection(),
+          const Divider(),
+          const _QrSection(),
           const Divider(),
           const _SubscriptionSection(),
           const Divider(),
@@ -45,12 +49,12 @@ class _ProfileSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authUser = ref.watch(authStateProvider).valueOrNull;
+    final profileAsync = ref.watch(myProfileProvider);
     final theme = Theme.of(context);
 
-    final email = authUser?.email;
-    final phone = authUser?.phone;
-    final displayName = email ?? phone ?? 'Account';
+    final profile = profileAsync.valueOrNull;
+    final displayName = profile?.displayName ?? '…';
+    final username = profile?.username;
 
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -76,16 +80,111 @@ class _ProfileSection extends ConsumerWidget {
                   style: theme.textTheme.titleMedium
                       ?.copyWith(fontWeight: FontWeight.w600),
                 ),
-                if (email != null && phone != null)
-                  Text(phone,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      )),
+                if (username != null)
+                  Text(
+                    '@$username',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// QR section
+// ---------------------------------------------------------------------------
+
+class _QrSection extends ConsumerWidget {
+  const _QrSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(myProfileProvider);
+    final theme = Theme.of(context);
+    final username = profileAsync.valueOrNull?.username;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.xs),
+          child: Text(
+            'My QR Code',
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        ),
+        if (username == null)
+          const Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+            child: Text('Set a username to generate your QR code.'),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Share this QR so friends can add you to a trip.',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(AppSpacing.md),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.shadow.withAlpha(20),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: QrImageView(
+                      data: 'tripmate://user/$username',
+                      version: QrVersions.auto,
+                      size: 200,
+                      semanticsLabel: 'QR code for @$username',
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Center(
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      await Clipboard.setData(
+                        ClipboardData(text: 'tripmate://user/$username'),
+                      );
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          const SnackBar(content: Text('Username link copied')),
+                        );
+                    },
+                    icon: const Icon(Icons.copy, size: 18),
+                    label: Text('@$username'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }

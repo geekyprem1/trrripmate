@@ -30,7 +30,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Stream<AuthUser?> authStateChanges() => _remote.authStateChanges();
 
   @override
-  AuthUser? get currentUser => const AuthUser(id: 'offline-user-1', email: 'test@tripmate.offline');
+  AuthUser? get currentUser => _remote.currentUser;
 
   @override
   Future<Result<AuthUser>> signInWithEmail({
@@ -106,17 +106,17 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Result<UserProfile>> upsertProfile({
     required String displayName,
+    required String username,
     String? avatarUrl,
   }) {
     return _guard(
       () async {
         final user = _remote.currentUser;
-        if (user == null) {
-          throw const _NotAuthenticated();
-        }
+        if (user == null) throw const _NotAuthenticated();
         final dto = ProfileDto(
           id: user.id,
           displayName: displayName.trim(),
+          username: username.trim().toLowerCase(),
           tier: 'free',
           avatarUrl: avatarUrl,
           email: user.email,
@@ -126,6 +126,18 @@ class AuthRepositoryImpl implements AuthRepository {
         return saved.toEntity();
       },
       action: 'upsertProfile',
+    );
+  }
+
+  @override
+  Future<Result<UserProfile?>> findUserByUsername(String username) {
+    return _guard(
+      () async {
+        final dto =
+            await _profileRemote.findProfileByUsername(username.trim());
+        return dto?.toEntity();
+      },
+      action: 'findUserByUsername',
     );
   }
 

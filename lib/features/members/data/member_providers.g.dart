@@ -77,7 +77,7 @@ final memberRepositoryProvider = Provider<MemberRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MemberRepositoryRef = ProviderRef<MemberRepository>;
-String _$tripMembersHash() => r'0c25429c1a7bcfe7d8eecaef745ac09690ce5658';
+String _$tripMembersHash() => r'47d171ab578cdabb61b5841f6f4fc4b2e2c363e5';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -239,5 +239,48 @@ class _TripMembersProviderElement
   @override
   String get tripId => (origin as TripMembersProvider).tripId;
 }
+
+String _$notificationsRemoteDataSourceHash() =>
+    r'86783532f30e66f54a4d124422235f3fededa5c8';
+
+/// See also [notificationsRemoteDataSource].
+@ProviderFor(notificationsRemoteDataSource)
+final notificationsRemoteDataSourceProvider =
+    Provider<NotificationsRemoteDataSource>.internal(
+  notificationsRemoteDataSource,
+  name: r'notificationsRemoteDataSourceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$notificationsRemoteDataSourceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef NotificationsRemoteDataSourceRef
+    = ProviderRef<NotificationsRemoteDataSource>;
+String _$unreadNotificationsHash() =>
+    r'9946e167da6d4c3bce90aefe042185b67e4154dd';
+
+/// Unread notifications for the current user. Invalidate to refresh.
+///
+/// Copied from [unreadNotifications].
+@ProviderFor(unreadNotifications)
+final unreadNotificationsProvider =
+    AutoDisposeFutureProvider<List<NotificationRow>>.internal(
+  unreadNotifications,
+  name: r'unreadNotificationsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$unreadNotificationsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef UnreadNotificationsRef
+    = AutoDisposeFutureProviderRef<List<NotificationRow>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

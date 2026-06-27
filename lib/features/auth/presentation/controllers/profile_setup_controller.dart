@@ -10,14 +10,19 @@ class ProfileSetupController extends _$ProfileSetupController {
   @override
   AsyncValue<void> build() => const AsyncValue.data(null);
 
-  Future<bool> submit({required String displayName}) async {
+  Future<bool> submit({
+    required String displayName,
+    required String username,
+  }) async {
     state = const AsyncValue.loading();
-    final result = await ref
-        .read(authRepositoryProvider)
-        .upsertProfile(displayName: displayName);
+    final result = await ref.read(authRepositoryProvider).upsertProfile(
+          displayName: displayName,
+          username: username,
+        );
     return result.fold(
       onSuccess: (_) {
         ref.invalidate(profileStatusProvider);
+        ref.invalidate(myProfileProvider);
         state = const AsyncValue.data(null);
         return true;
       },

@@ -1,0 +1,72 @@
+name: Build & Release APK
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build release APK
+        run: |
+          flutter build apk --release \
+            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Get version name
+        id: version
+        run: |
+          VERSION=$(grep 'version:' pubspec.yaml | head -1 | awk '{print $2}' | cut -d'+' -f1)
+          BUILD=$(grep 'version:' pubspec.yaml | head -1 | awk '{print $2}' | cut -d'+' -f2)
+          echo "name=v$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION+$BUILD-$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "TripMate ${{ steps.version.outputs.name }} — $(date +'%d %b %Y')"
+          body: |
+            ## Download
+            👇 **APK file neeche se download karo**
+
+            ### Pehli baar install kar rahe ho?
+            1. APK download karo
+            2. Settings → Unknown sources allow karo
+            3. Downloaded APK open karo → Install
+
+            ### Already installed hai?
+            Naya APK download karo, install karo — data safe rahega.
+
+            ---
+            _Built from commit ${{ github.sha }} by ${{ github.actor }}_
+          files: build/app/outputs/flutter-apk/app-release.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

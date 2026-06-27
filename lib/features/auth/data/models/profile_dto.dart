@@ -11,6 +11,7 @@ class ProfileDto {
     required this.id,
     required this.displayName,
     required this.tier,
+    this.username,
     this.avatarUrl,
     this.email,
     this.phone,
@@ -23,6 +24,7 @@ class ProfileDto {
   @JsonKey(name: 'display_name')
   final String displayName;
   final String tier;
+  final String? username;
   @JsonKey(name: 'avatar_url')
   final String? avatarUrl;
   final String? email;
@@ -36,6 +38,7 @@ class ProfileDto {
       id: id,
       displayName: displayName,
       tier: tier == 'premium' ? UserTier.premium : UserTier.free,
+      username: username,
       avatarUrl: avatarUrl,
       email: email,
       phone: phone,

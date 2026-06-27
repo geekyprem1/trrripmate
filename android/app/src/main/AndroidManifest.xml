@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Camera required for QR code scanning (mobile_scanner) -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <application
         android:label="tripmate"
         android:name="${applicationName}"

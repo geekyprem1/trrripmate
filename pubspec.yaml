@@ -58,6 +58,10 @@ dependencies:
   cupertino_icons: ^1.0.8
   sentry_flutter: ^9.22.0
 
+  # QR code generation + scanning (username-based friend/trip add)
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.2.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

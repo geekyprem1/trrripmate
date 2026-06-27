@@ -337,7 +337,9 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                 childrenPadding: const EdgeInsets.all(AppSpacing.md),
                 children: [
                   DropdownButtonFormField<String>(
-                    value: _payerMemberId,
+                    value: members.any((m) => m.id == _payerMemberId)
+                        ? _payerMemberId
+                        : null,
                     decoration: const InputDecoration(
                       labelText: 'Paid by',
                       prefixIcon: Icon(Icons.account_circle_outlined),

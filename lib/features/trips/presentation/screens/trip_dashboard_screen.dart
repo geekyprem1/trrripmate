@@ -69,6 +69,14 @@ class _TripDashboardScreenState extends ConsumerState<TripDashboardScreen> {
         title: Text(trip.name),
         actions: [
           IconButton(
+            icon: const Icon(Icons.event_note_outlined),
+            tooltip: 'Trip Planner',
+            onPressed: () => context.pushNamed(
+              AppRoutes.tripPlannerName,
+              pathParameters: {'id': trip.id},
+            ),
+          ),
+          IconButton(
             icon: const Icon(Icons.group_outlined),
             tooltip: 'Members',
             onPressed: () => context.pushNamed(

@@ -187,6 +187,52 @@ class Settlements extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+/// Local cache of accepted friends (offline-first, no server sync needed for MVP).
+@DataClassName('FriendRow')
+class Friends extends Table {
+  TextColumn get id => text()();
+
+  /// The friend's Supabase auth uid.
+  TextColumn get friendUserId => text()();
+
+  TextColumn get displayName => text()();
+
+  TextColumn get username => text().nullable()();
+
+  TextColumn get avatarUrl => text().nullable()();
+
+  TextColumn get email => text().nullable()();
+
+  DateTimeColumn get addedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<Set<Column<Object>>> get uniqueKeys => [
+        {friendUserId},
+      ];
+}
+
+/// Pre-trip budget planning items (local-only, per trip).
+@DataClassName('TripPlanItemRow')
+class TripPlanItems extends Table {
+  TextColumn get id => text()();
+
+  TextColumn get tripId => text()();
+
+  TextColumn get name => text().withLength(min: 1, max: 80)();
+
+  TextColumn get category => text().nullable()();
+
+  IntColumn get estimatedAmountMinor => integer()();
+
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 /// Local-only forecast/planning items for a trip (never synced to server).
 /// Lets users plan future spending and see projected remaining budget.
 @DataClassName('ForecastItemRow')

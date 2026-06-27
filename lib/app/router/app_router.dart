@@ -15,7 +15,9 @@ import 'package:tripmate/features/expenses/presentation/screens/expense_screen_l
 import 'package:tripmate/features/members/presentation/controllers/pending_invite.dart';
 import 'package:tripmate/features/members/presentation/screens/join_trip_screen.dart';
 import 'package:tripmate/features/members/presentation/screens/members_screen.dart';
+import 'package:tripmate/features/friends/presentation/screens/friends_screen.dart';
 import 'package:tripmate/features/members/presentation/screens/notifications_screen.dart';
+import 'package:tripmate/features/trips/presentation/screens/trip_planner_screen.dart';
 import 'package:tripmate/features/premium/presentation/screens/paywall_screen.dart';
 import 'package:tripmate/features/trips/presentation/screens/archived_trips_screen.dart';
 import 'package:tripmate/features/trips/presentation/screens/create_edit_trip_screen.dart';
@@ -129,6 +131,17 @@ GoRouter goRouter(Ref ref) {
         name: AppRoutes.expenseDetailName,
         builder: (_, state) =>
             ExpenseDetailScreen(expenseId: state.pathParameters['eid']!),
+      ),
+      GoRoute(
+        path: AppRoutes.friendsPath,
+        name: AppRoutes.friendsName,
+        builder: (_, __) => const FriendsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.tripPlannerPath,
+        name: AppRoutes.tripPlannerName,
+        builder: (_, state) =>
+            TripPlannerScreen(tripId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.notificationsPath,

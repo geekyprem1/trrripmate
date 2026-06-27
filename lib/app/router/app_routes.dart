@@ -47,6 +47,14 @@ abstract final class AppRoutes {
   static const invitePath = '/invite/:code';
   static const inviteName = 'invite';
 
+  // Friends screen.
+  static const friendsPath = '/friends';
+  static const friendsName = 'friends';
+
+  // Trip Planner (per-trip pre-budget planning).
+  static const tripPlannerPath = '/trips/:id/planner';
+  static const tripPlannerName = 'trip-planner';
+
   // Notifications screen.
   static const notificationsPath = '/notifications';
   static const notificationsName = 'notifications';

@@ -240,7 +240,7 @@ class _DashboardTab extends ConsumerWidget {
               ],
             ),
           ),
-        BudgetHeader(summary: summary),
+        BudgetHeader(summary: summary, tripId: trip.id),
         const SizedBox(height: AppSpacing.lg),
         Text(
           'Add expenses from the Expenses tab to track spending.',

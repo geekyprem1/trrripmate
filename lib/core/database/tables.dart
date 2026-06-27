@@ -187,6 +187,25 @@ class Settlements extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+/// Local-only forecast/planning items for a trip (never synced to server).
+/// Lets users plan future spending and see projected remaining budget.
+@DataClassName('ForecastItemRow')
+class ForecastItems extends Table {
+  TextColumn get id => text()();
+
+  TextColumn get tripId => text()();
+
+  TextColumn get name => text().withLength(min: 1, max: 80)();
+
+  /// Planned amount in minor units (paise/cents).
+  IntColumn get amountMinor => integer()();
+
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 /// Durable offline write queue (DB Design §7.10 SyncQueueItem). Drained by the
 /// sync engine in dependency order (Architecture §6).
 @DataClassName('SyncQueueRow')

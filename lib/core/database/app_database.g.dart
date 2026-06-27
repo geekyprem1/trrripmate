@@ -3548,6 +3548,321 @@ class SyncQueueItemsCompanion extends UpdateCompanion<SyncQueueRow> {
   }
 }
 
+class $ForecastItemsTable extends ForecastItems
+    with TableInfo<$ForecastItemsTable, ForecastItemRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ForecastItemsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _tripIdMeta = const VerificationMeta('tripId');
+  @override
+  late final GeneratedColumn<String> tripId = GeneratedColumn<String>(
+      'trip_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 80),
+      type: DriftSqlType.string,
+      requiredDuringInsert: true);
+  static const VerificationMeta _amountMinorMeta =
+      const VerificationMeta('amountMinor');
+  @override
+  late final GeneratedColumn<int> amountMinor = GeneratedColumn<int>(
+      'amount_minor', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, tripId, name, amountMinor, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'forecast_items';
+  @override
+  VerificationContext validateIntegrity(Insertable<ForecastItemRow> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('trip_id')) {
+      context.handle(_tripIdMeta,
+          tripId.isAcceptableOrUnknown(data['trip_id']!, _tripIdMeta));
+    } else if (isInserting) {
+      context.missing(_tripIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('amount_minor')) {
+      context.handle(
+          _amountMinorMeta,
+          amountMinor.isAcceptableOrUnknown(
+              data['amount_minor']!, _amountMinorMeta));
+    } else if (isInserting) {
+      context.missing(_amountMinorMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ForecastItemRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ForecastItemRow(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      tripId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}trip_id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      amountMinor: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}amount_minor'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $ForecastItemsTable createAlias(String alias) {
+    return $ForecastItemsTable(attachedDatabase, alias);
+  }
+}
+
+class ForecastItemRow extends DataClass implements Insertable<ForecastItemRow> {
+  final String id;
+  final String tripId;
+  final String name;
+
+  /// Planned amount in minor units (paise/cents).
+  final int amountMinor;
+  final DateTime createdAt;
+  const ForecastItemRow(
+      {required this.id,
+      required this.tripId,
+      required this.name,
+      required this.amountMinor,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['trip_id'] = Variable<String>(tripId);
+    map['name'] = Variable<String>(name);
+    map['amount_minor'] = Variable<int>(amountMinor);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  ForecastItemsCompanion toCompanion(bool nullToAbsent) {
+    return ForecastItemsCompanion(
+      id: Value(id),
+      tripId: Value(tripId),
+      name: Value(name),
+      amountMinor: Value(amountMinor),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory ForecastItemRow.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ForecastItemRow(
+      id: serializer.fromJson<String>(json['id']),
+      tripId: serializer.fromJson<String>(json['tripId']),
+      name: serializer.fromJson<String>(json['name']),
+      amountMinor: serializer.fromJson<int>(json['amountMinor']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'tripId': serializer.toJson<String>(tripId),
+      'name': serializer.toJson<String>(name),
+      'amountMinor': serializer.toJson<int>(amountMinor),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  ForecastItemRow copyWith(
+          {String? id,
+          String? tripId,
+          String? name,
+          int? amountMinor,
+          DateTime? createdAt}) =>
+      ForecastItemRow(
+        id: id ?? this.id,
+        tripId: tripId ?? this.tripId,
+        name: name ?? this.name,
+        amountMinor: amountMinor ?? this.amountMinor,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  ForecastItemRow copyWithCompanion(ForecastItemsCompanion data) {
+    return ForecastItemRow(
+      id: data.id.present ? data.id.value : this.id,
+      tripId: data.tripId.present ? data.tripId.value : this.tripId,
+      name: data.name.present ? data.name.value : this.name,
+      amountMinor:
+          data.amountMinor.present ? data.amountMinor.value : this.amountMinor,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ForecastItemRow(')
+          ..write('id: $id, ')
+          ..write('tripId: $tripId, ')
+          ..write('name: $name, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, tripId, name, amountMinor, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ForecastItemRow &&
+          other.id == this.id &&
+          other.tripId == this.tripId &&
+          other.name == this.name &&
+          other.amountMinor == this.amountMinor &&
+          other.createdAt == this.createdAt);
+}
+
+class ForecastItemsCompanion extends UpdateCompanion<ForecastItemRow> {
+  final Value<String> id;
+  final Value<String> tripId;
+  final Value<String> name;
+  final Value<int> amountMinor;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const ForecastItemsCompanion({
+    this.id = const Value.absent(),
+    this.tripId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.amountMinor = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ForecastItemsCompanion.insert({
+    required String id,
+    required String tripId,
+    required String name,
+    required int amountMinor,
+    required DateTime createdAt,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        tripId = Value(tripId),
+        name = Value(name),
+        amountMinor = Value(amountMinor),
+        createdAt = Value(createdAt);
+  static Insertable<ForecastItemRow> custom({
+    Expression<String>? id,
+    Expression<String>? tripId,
+    Expression<String>? name,
+    Expression<int>? amountMinor,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (tripId != null) 'trip_id': tripId,
+      if (name != null) 'name': name,
+      if (amountMinor != null) 'amount_minor': amountMinor,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ForecastItemsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? tripId,
+      Value<String>? name,
+      Value<int>? amountMinor,
+      Value<DateTime>? createdAt,
+      Value<int>? rowid}) {
+    return ForecastItemsCompanion(
+      id: id ?? this.id,
+      tripId: tripId ?? this.tripId,
+      name: name ?? this.name,
+      amountMinor: amountMinor ?? this.amountMinor,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (tripId.present) {
+      map['trip_id'] = Variable<String>(tripId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (amountMinor.present) {
+      map['amount_minor'] = Variable<int>(amountMinor.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ForecastItemsCompanion(')
+          ..write('id: $id, ')
+          ..write('tripId: $tripId, ')
+          ..write('name: $name, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3557,17 +3872,26 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ExpenseSplitsTable expenseSplits = $ExpenseSplitsTable(this);
   late final $SettlementsTable settlements = $SettlementsTable(this);
   late final $SyncQueueItemsTable syncQueueItems = $SyncQueueItemsTable(this);
+  late final $ForecastItemsTable forecastItems = $ForecastItemsTable(this);
   late final TripDao tripDao = TripDao(this as AppDatabase);
   late final MemberDao memberDao = MemberDao(this as AppDatabase);
   late final ExpenseDao expenseDao = ExpenseDao(this as AppDatabase);
   late final SettlementDao settlementDao = SettlementDao(this as AppDatabase);
   late final SyncQueueDao syncQueueDao = SyncQueueDao(this as AppDatabase);
+  late final ForecastDao forecastDao = ForecastDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [trips, members, expenses, expenseSplits, settlements, syncQueueItems];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        trips,
+        members,
+        expenses,
+        expenseSplits,
+        settlements,
+        syncQueueItems,
+        forecastItems
+      ];
 }
 
 typedef $$TripsTableCreateCompanionBuilder = TripsCompanion Function({
@@ -5184,6 +5508,179 @@ typedef $$SyncQueueItemsTableProcessedTableManager = ProcessedTableManager<
     ),
     SyncQueueRow,
     PrefetchHooks Function()>;
+typedef $$ForecastItemsTableCreateCompanionBuilder = ForecastItemsCompanion
+    Function({
+  required String id,
+  required String tripId,
+  required String name,
+  required int amountMinor,
+  required DateTime createdAt,
+  Value<int> rowid,
+});
+typedef $$ForecastItemsTableUpdateCompanionBuilder = ForecastItemsCompanion
+    Function({
+  Value<String> id,
+  Value<String> tripId,
+  Value<String> name,
+  Value<int> amountMinor,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
+
+class $$ForecastItemsTableFilterComposer
+    extends Composer<_$AppDatabase, $ForecastItemsTable> {
+  $$ForecastItemsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get tripId => $composableBuilder(
+      column: $table.tripId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get amountMinor => $composableBuilder(
+      column: $table.amountMinor, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$ForecastItemsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ForecastItemsTable> {
+  $$ForecastItemsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get tripId => $composableBuilder(
+      column: $table.tripId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get amountMinor => $composableBuilder(
+      column: $table.amountMinor, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$ForecastItemsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ForecastItemsTable> {
+  $$ForecastItemsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get tripId =>
+      $composableBuilder(column: $table.tripId, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMinor => $composableBuilder(
+      column: $table.amountMinor, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$ForecastItemsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ForecastItemsTable,
+    ForecastItemRow,
+    $$ForecastItemsTableFilterComposer,
+    $$ForecastItemsTableOrderingComposer,
+    $$ForecastItemsTableAnnotationComposer,
+    $$ForecastItemsTableCreateCompanionBuilder,
+    $$ForecastItemsTableUpdateCompanionBuilder,
+    (
+      ForecastItemRow,
+      BaseReferences<_$AppDatabase, $ForecastItemsTable, ForecastItemRow>
+    ),
+    ForecastItemRow,
+    PrefetchHooks Function()> {
+  $$ForecastItemsTableTableManager(_$AppDatabase db, $ForecastItemsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ForecastItemsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ForecastItemsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ForecastItemsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> tripId = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<int> amountMinor = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ForecastItemsCompanion(
+            id: id,
+            tripId: tripId,
+            name: name,
+            amountMinor: amountMinor,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String tripId,
+            required String name,
+            required int amountMinor,
+            required DateTime createdAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ForecastItemsCompanion.insert(
+            id: id,
+            tripId: tripId,
+            name: name,
+            amountMinor: amountMinor,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$ForecastItemsTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $ForecastItemsTable,
+    ForecastItemRow,
+    $$ForecastItemsTableFilterComposer,
+    $$ForecastItemsTableOrderingComposer,
+    $$ForecastItemsTableAnnotationComposer,
+    $$ForecastItemsTableCreateCompanionBuilder,
+    $$ForecastItemsTableUpdateCompanionBuilder,
+    (
+      ForecastItemRow,
+      BaseReferences<_$AppDatabase, $ForecastItemsTable, ForecastItemRow>
+    ),
+    ForecastItemRow,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5200,4 +5697,6 @@ class $AppDatabaseManager {
       $$SettlementsTableTableManager(_db, _db.settlements);
   $$SyncQueueItemsTableTableManager get syncQueueItems =>
       $$SyncQueueItemsTableTableManager(_db, _db.syncQueueItems);
+  $$ForecastItemsTableTableManager get forecastItems =>
+      $$ForecastItemsTableTableManager(_db, _db.forecastItems);
 }

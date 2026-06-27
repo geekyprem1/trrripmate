@@ -36,6 +36,7 @@ class NotificationRow {
   final Map<String, dynamic>? payload;
 
   String? get inviteCode => payload?['invite_code'] as String?;
+  String? get friendRequestId => payload?['friend_request_id'] as String?;
 }
 
 /// Reads and updates the `notifications` table (RLS: user sees only own rows).

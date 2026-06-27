@@ -4,6 +4,7 @@ import 'package:tripmate/app/router/app_router.dart';
 import 'package:tripmate/app/theme/app_theme.dart';
 import 'package:tripmate/core/sync/sync_providers.dart';
 import 'package:tripmate/features/auth/data/auth_providers.dart';
+import 'package:tripmate/features/friends/data/friends_providers.dart';
 import 'package:tripmate/features/premium/data/premium_providers.dart';
 import 'package:tripmate/features/trips/data/trip_providers.dart';
 
@@ -25,6 +26,7 @@ class TripMateApp extends ConsumerWidget {
         Future.microtask(() async {
           await ref.read(syncEngineProvider).requestSync();
           await ref.read(tripRepositoryProvider).refreshFromRemote();
+          await ref.read(friendsRepositoryProvider).refreshFromRemote();
         });
       }
     });

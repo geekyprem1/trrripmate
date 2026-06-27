@@ -22,7 +22,26 @@ final friendsDaoProvider = Provider<FriendsDao>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FriendsDaoRef = ProviderRef<FriendsDao>;
-String _$friendsRepositoryHash() => r'0bcc9883f1629c680af579d8f7dfd4379dbb7b2a';
+String _$friendsRemoteDataSourceHash() =>
+    r'1b18731b8dce6a1863ba6c0221970c14a153ba7f';
+
+/// See also [friendsRemoteDataSource].
+@ProviderFor(friendsRemoteDataSource)
+final friendsRemoteDataSourceProvider =
+    Provider<FriendsRemoteDataSource>.internal(
+  friendsRemoteDataSource,
+  name: r'friendsRemoteDataSourceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$friendsRemoteDataSourceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef FriendsRemoteDataSourceRef = ProviderRef<FriendsRemoteDataSource>;
+String _$friendsRepositoryHash() => r'1fab65e180d6ae7d7b157107389bd771a8f9f47c';
 
 /// See also [friendsRepository].
 @ProviderFor(friendsRepository)

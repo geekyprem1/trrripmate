@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tripmate/app/theme/app_spacing.dart';
-import 'package:tripmate/core/error/failure.dart';
 import 'package:tripmate/features/auth/data/auth_providers.dart';
 import 'package:tripmate/features/auth/domain/entities/user_profile.dart';
+import 'package:tripmate/features/friends/data/datasources/friends_remote_data_source.dart';
 import 'package:tripmate/features/friends/data/friends_providers.dart';
 import 'package:tripmate/features/friends/domain/entities/friend.dart';
 
@@ -20,6 +20,20 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
   UserProfile? _found;
   String? _searchError;
 
+  /// Cache of relationship status for the found user.
+  /// null = not checked yet, '' = no relation, 'pending'/'accepted' = exists.
+  Map<String, dynamic>? _relationship;
+  bool _requestSent = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Refresh accepted friends from Supabase when screen opens.
+    Future.microtask(
+      () => ref.read(friendsRepositoryProvider).refreshFromRemote(),
+    );
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -33,16 +47,34 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
       _searching = true;
       _found = null;
       _searchError = null;
+      _relationship = null;
+      _requestSent = false;
     });
+
     final result =
         await ref.read(authRepositoryProvider).findUserByUsername(query);
     if (!mounted) return;
-    result.fold(
-      onSuccess: (profile) => setState(() {
-        _searching = false;
-        _found = profile;
-        if (profile == null) _searchError = 'No user found with @$query.';
-      }),
+
+    await result.fold(
+      onSuccess: (profile) async {
+        if (profile == null) {
+          setState(() {
+            _searching = false;
+            _searchError = 'No user found with @$query.';
+          });
+          return;
+        }
+        // Check existing relationship.
+        final rel = await ref
+            .read(friendsRemoteDataSourceProvider)
+            .checkRelationship(profile.id);
+        if (!mounted) return;
+        setState(() {
+          _searching = false;
+          _found = profile;
+          _relationship = rel;
+        });
+      },
       onFailure: (f) => setState(() {
         _searching = false;
         _searchError = f.displayMessage;
@@ -50,25 +82,27 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     );
   }
 
-  Future<void> _addFriend(UserProfile profile) async {
-    await ref.read(friendsRepositoryProvider).addFriend(
-          friendUserId: profile.id,
-          displayName: profile.displayName,
-          username: profile.username,
-          email: profile.email,
-          avatarUrl: profile.avatarUrl,
+  Future<void> _sendRequest(UserProfile profile) async {
+    setState(() => _requestSent = true);
+    try {
+      await ref.read(friendsRepositoryProvider).sendFriendRequest(profile.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text('Friend request sent to ${profile.displayName}!'),
+          ),
         );
-    if (!mounted) return;
-    setState(() {
-      _found = null;
-      _searchController.clear();
-      _searchError = null;
-    });
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(content: Text('${profile.displayName} added to friends!')),
-      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _requestSent = false);
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(content: Text('Could not send request. Try again.')),
+        );
+    }
   }
 
   Future<void> _removeFriend(Friend friend) async {
@@ -89,9 +123,7 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
       ),
     );
     if (confirmed == true) {
-      await ref
-          .read(friendsRepositoryProvider)
-          .removeFriend(friend.friendUserId);
+      await ref.read(friendsRepositoryProvider).removeFriend(friend.friendUserId);
     }
   }
 
@@ -142,12 +174,13 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                   Text(_searchError!,
                       style: TextStyle(color: theme.colorScheme.error)),
                 ],
-                // Search result card
                 if (_found != null) ...[
                   const SizedBox(height: AppSpacing.md),
                   _SearchResultCard(
                     profile: _found!,
-                    onAdd: () => _addFriend(_found!),
+                    relationship: _relationship,
+                    requestSent: _requestSent,
+                    onSendRequest: () => _sendRequest(_found!),
                   ),
                 ],
               ],
@@ -156,7 +189,6 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
 
           const Divider(height: 1),
 
-          // Friends list
           Padding(
             padding: const EdgeInsets.fromLTRB(
                 AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.xs),
@@ -221,18 +253,43 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
 }
 
 class _SearchResultCard extends ConsumerWidget {
-  const _SearchResultCard({required this.profile, required this.onAdd});
+  const _SearchResultCard({
+    required this.profile,
+    required this.relationship,
+    required this.requestSent,
+    required this.onSendRequest,
+  });
 
   final UserProfile profile;
-  final VoidCallback onAdd;
+  final Map<String, dynamic>? relationship;
+  final bool requestSent;
+  final VoidCallback onSendRequest;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final alreadyFriend = ref
-        .watch(friendsListProvider)
-        .valueOrNull
-        ?.any((f) => f.friendUserId == profile.id) ?? false;
+    final myId = ref.read(authStateProvider).valueOrNull?.id;
+
+    Widget trailing;
+    if (relationship?['status'] == 'accepted') {
+      trailing = const Chip(
+        label: Text('Friends'),
+        avatar: Icon(Icons.check, size: 16),
+      );
+    } else if (requestSent ||
+        (relationship != null && relationship!['status'] == 'pending')) {
+      final iSent = relationship?['requester_id'] == myId || requestSent;
+      trailing = Chip(
+        label: Text(iSent ? 'Request Sent' : 'Pending'),
+        avatar: const Icon(Icons.hourglass_top_rounded, size: 16),
+      );
+    } else {
+      trailing = FilledButton.icon(
+        onPressed: onSendRequest,
+        icon: const Icon(Icons.person_add_rounded, size: 18),
+        label: const Text('Add'),
+      );
+    }
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -248,8 +305,7 @@ class _SearchResultCard extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(profile.displayName,
-                    style: theme.textTheme.titleSmall),
+                Text(profile.displayName, style: theme.textTheme.titleSmall),
                 if (profile.username != null)
                   Text('@${profile.username}',
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -257,17 +313,7 @@ class _SearchResultCard extends ConsumerWidget {
               ],
             ),
           ),
-          if (alreadyFriend)
-            Chip(
-              label: const Text('Added'),
-              avatar: const Icon(Icons.check, size: 16),
-            )
-          else
-            FilledButton.icon(
-              onPressed: onAdd,
-              icon: const Icon(Icons.person_add_rounded, size: 18),
-              label: const Text('Add'),
-            ),
+          trailing,
         ],
       ),
     );

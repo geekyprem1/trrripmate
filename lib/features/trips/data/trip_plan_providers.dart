@@ -2,7 +2,6 @@ import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:tripmate/core/database/app_database.dart';
-import 'package:tripmate/core/database/tables.dart';
 import 'package:tripmate/core/providers/core_providers.dart';
 import 'package:tripmate/features/trips/data/datasources/trip_plan_dao.dart';
 import 'package:uuid/uuid.dart';

@@ -4,7 +4,6 @@ import 'package:tripmate/app/theme/app_spacing.dart';
 import 'package:tripmate/core/error/failure.dart';
 import 'package:tripmate/features/members/data/datasources/notifications_remote_data_source.dart';
 import 'package:tripmate/features/members/data/member_providers.dart';
-import 'package:tripmate/features/members/domain/repositories/member_repository.dart';
 import 'package:tripmate/features/trips/data/trip_providers.dart';
 
 /// Full-screen notifications list. Shows pending trip invites with

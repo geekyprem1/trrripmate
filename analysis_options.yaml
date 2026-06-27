@@ -1,0 +1,26 @@
+# TripMate analyzer config (CLAUDE.md §9 — zero-warning gate).
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "lib/generated/**"
+  language:
+    strict-casts: true
+    strict-raw-types: true
+  errors:
+    # Generated code and intentional patterns
+    invalid_annotation_target: ignore
+
+linter:
+  rules:
+    # Project conventions (CLAUDE.md §9): const-first, immutable, documented public API.
+    public_member_api_docs: false # Pragmatic: enforced on domain/contracts via review, not generated UI.
+    lines_longer_than_80_chars: false
+    flutter_style_todos: true
+    # Dependencies are grouped by concern with comments (more readable than A–Z).
+    sort_pub_dependencies: false
+    # `dart format` is the single formatting authority (CLAUDE.md §9); don't let
+    # a lint fight it over trailing commas.
+    require_trailing_commas: false

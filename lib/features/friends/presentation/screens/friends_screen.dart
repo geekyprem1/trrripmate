@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tripmate/app/theme/app_spacing.dart';
+import 'package:tripmate/core/error/failure.dart';
 import 'package:tripmate/features/auth/data/auth_providers.dart';
 import 'package:tripmate/features/auth/domain/entities/user_profile.dart';
-import 'package:tripmate/features/friends/data/datasources/friends_remote_data_source.dart';
 import 'package:tripmate/features/friends/data/friends_providers.dart';
 import 'package:tripmate/features/friends/domain/entities/friend.dart';
 
@@ -55,7 +55,7 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
         await ref.read(authRepositoryProvider).findUserByUsername(query);
     if (!mounted) return;
 
-    await result.fold(
+    await result.fold<Future<void>>(
       onSuccess: (profile) async {
         if (profile == null) {
           setState(() {
@@ -64,7 +64,6 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
           });
           return;
         }
-        // Check existing relationship.
         final rel = await ref
             .read(friendsRemoteDataSourceProvider)
             .checkRelationship(profile.id);
@@ -75,7 +74,7 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
           _relationship = rel;
         });
       },
-      onFailure: (f) => setState(() {
+      onFailure: (f) async => setState(() {
         _searching = false;
         _searchError = f.displayMessage;
       }),

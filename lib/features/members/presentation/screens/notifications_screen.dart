@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tripmate/app/theme/app_spacing.dart';
+import 'package:tripmate/core/error/failure.dart';
 import 'package:tripmate/features/friends/data/friends_providers.dart';
 import 'package:tripmate/features/members/data/datasources/notifications_remote_data_source.dart';
 import 'package:tripmate/features/members/data/member_providers.dart';
